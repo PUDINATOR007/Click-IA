@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Click IA</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: #000;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    #barra-loading {
+  transition: width 5s linear;
+}
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .tela {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: black;
+      color: #0ff;
+      font-size: 28px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .ativa {
+      display: flex;
+    }
+
+    #silhueta-celular {
+  margin-top: 20px;
+  filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #0ff);
+}
+
+    #tela-inicial {
+      z-index: 3;
+      display: none;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+    }
+
+    #titulo {
+      font-size: 48px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+      margin-bottom: 30px;
+    }
+
+    #botao-iniciar {
+      padding: 15px 40px;
+      font-size: 20px;
+      background: #000;
+      color: #0ff;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    #botao-iniciar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+    }
+
+    #tela-jogo {
+      display: none;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: white;
+      color: black;
+      font-size: 32px;
+      justify-content: center;
+      align-items: center;
+      z-index: 4;
+    }
+  </style>
+</head>
+<body>
+	<!-- Tela de carregamento -->
+<div id="tela-loading" class="tela" style="background: black; z-index: 5;">
+  <div style="color: #0ff; font-size: 24px; margin-bottom: 20px;">Carregando...</div>
+  <div id="barra-container" style="width: 80%; height: 20px; background: #222; border-radius: 10px; overflow: hidden;">
+    <div id="barra-loading" style="height: 100%; width: 0%; background: #0ff; box-shadow: 0 0 10px #0ff;"></div>
+  </div>
+</div>
+  <canvas id="fundo"></canvas>
+  
+  <audio id="musica-fundo" src="musicafundo.mp3" autoplay loop></audio>
+
+  <!-- Intro 1: Recomendo -->
+  <div id="intro1" class="tela">
+    <div>Recomendado:</div>
+    <div id="silhueta-celular">
+  <svg viewBox="0 0 200 100" width="200" height="100">
+    <rect x="10" y="10" width="180" height="80" rx="15" ry="15" fill="none" stroke="#0ff" stroke-width="5" />
+    <circle cx="180" cy="50" r="4" fill="#0ff" />
+  </svg>
+</div>
+  </div>
+
+  <!-- Intro 2: Criador -->
+  <div id="intro2" class="tela">
+    <div>Criadores:</div>
+    <div>Guylherme Yoshimura Paiva e chatgpt</div>
+  </div>
+
+  <!-- Tela Inicial -->
+  <div id="tela-inicial">
+    <h1 id="titulo">Click IA</h1>
+    <button id="botao-iniciar" onclick="iniciar()">Iniciar</button>
+  </div>
+
+  <!-- Tela do jogo -->
+  <div id="tela-jogo">
+    fazendo
+  </div>
+
+  <script>
+  function iniciar() {
+    document.getElementById("tela-inicial").style.display = "none";
+    document.getElementById("tela-jogo").style.display = "flex";
+  }
+
+  // Fundo animado com partículas neon
+  const canvas = document.getElementById("fundo");
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+
+  function resizeCanvasAndParticles() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particles = [];
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 1,
+        speedX: (Math.random() - 0.5) * 1,
+        speedY: (Math.random() - 0.5) * 1,
+      });
+    }
+  }
+
+  resizeCanvasAndParticles();
+  window.addEventListener("resize", resizeCanvasAndParticles);
+
+  function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0ff";
+    ctx.shadowColor = "#0ff";
+    ctx.shadowBlur = 15;
+
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      p.x += p.speedX;
+      p.y += p.speedY;
+
+      if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+    });
+
+    requestAnimationFrame(drawParticles);
+  }
+
+  drawParticles();
+
+  // Fade helpers
+  function fadeIn(div) {
+    return new Promise(resolve => {
+      div.classList.add("ativa");
+      setTimeout(() => {
+        div.style.opacity = "1";
+        setTimeout(resolve, 2000);
+      }, 50);
+    });
+  }
+
+  function fadeOut(div) {
+    return new Promise(resolve => {
+      div.style.opacity = "0";
+      setTimeout(() => {
+        div.classList.remove("ativa");
+        resolve();
+      }, 1500);
+    });
+  }
+
+  // Controla a sequência de introdução
+async function mostrarIntro() {
+  const loading = document.getElementById("tela-loading");
+  const intro1 = document.getElementById("intro1");
+  const intro2 = document.getElementById("intro2");
+  const telaInicial = document.getElementById("tela-inicial");
+  const barra = document.getElementById("barra-loading");
+
+  // Mostra a tela de loading com fade
+  await fadeIn(loading);
+
+  // Começa a barra de carregamento
+  await new Promise(r => setTimeout(() => {
+    barra.style.width = "100%";
+    r();
+  }, 50));
+
+  // Aguarda os 5 segundos
+  await new Promise(r => setTimeout(r, 5000));
+
+  // Vai para intro
+  await fadeOut(loading);
+  await fadeIn(intro1);
+  await fadeOut(intro1);
+  await fadeIn(intro2);
+  await fadeOut(intro2);
+
+  telaInicial.style.display = "flex";
+  document.getElementById("musica-fundo").play();
+}
+
+  window.onload = () => {
+    mostrarIntro();
+  };
+</script>
+</body>
+</html>
