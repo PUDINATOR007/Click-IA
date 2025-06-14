@@ -23,6 +23,20 @@
       left: 0;
       z-index: 0;
     }
+    
+    #icone-som {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 10;
+  filter: drop-shadow(0 0 5px #0ff) drop-shadow(0 0 10px #0ff);
+  transition: transform 0.2s;
+}
+
+#icone-som:hover {
+  transform: scale(1.1);
+}
 
     .tela {
       position: absolute;
@@ -145,6 +159,19 @@
     document.getElementById("tela-inicial").style.display = "none";
     document.getElementById("tela-jogo").style.display = "flex";
   }
+  
+  function toggleSom() {
+  const audio = document.getElementById("musica-fundo");
+  const onda = document.getElementById("onda-som");
+
+  if (audio.paused) {
+    audio.play();
+    onda.style.display = "inline"; // mostrar a onda sonora
+  } else {
+    audio.pause();
+    onda.style.display = "none"; // esconder a onda sonora
+  }
+}
 
   // Fundo animado com partículas neon
   const canvas = document.getElementById("fundo");
@@ -241,12 +268,19 @@ async function mostrarIntro() {
   await fadeOut(intro2);
 
   telaInicial.style.display = "flex";
-  document.getElementById("musica-fundo").play();
 }
 
   window.onload = () => {
     mostrarIntro();
   };
 </script>
+  <div id="icone-som" onclick="toggleSom()">
+  <svg viewBox="0 0 64 64" width="64" height="64" id="icone-som-svg">
+    <!-- Alto-falante -->
+    <polygon points="8,24 20,24 32,16 32,48 20,40 8,40" fill="none" stroke="#0ff" stroke-width="4"/>
+    <!-- Onda de som (ligado) -->
+    <path id="onda-som" d="M38,22 Q46,32 38,42" fill="none" stroke="#0ff" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+</div>
 </body>
 </html>
