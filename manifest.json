@@ -1,8 +1,14 @@
 {
   "name": "Click IA",
-  "theme_color": "#0600ff",
-  "background_color": "#164398",
-  "short_name": "CIA",
-  "id": "CIA",
-  "description": "Um jogo de clicker sobre IAs feito por uma IAp"
+  "short_name": "ClickIA",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0ff",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icone192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icone512.png", "sizes": "512x512", "type": "image/png" }
+  ]
 }
