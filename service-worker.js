@@ -2,12 +2,13 @@ self.addEventListener('install', function(e) {
   e.waitUntil(
     caches.open('clickia-cache').then(function(cache) {
       return cache.addAll([
-        '/',
-        '/index.html',
-        '/musicafundo.mp3',
-        '/manifest.json',
-        '/icone192.png',
-        '/icone512.png'
+  '/Click-IA/',
+  '/Click-IA/index.html',
+  '/Click-IA/musicafundo.mp3',
+  '/Click-IA/manifest.json',
+  '/Click-IA/icone192.png',
+  '/Click-IA/icone512.png'
+]);
       ]);
     })
   );
