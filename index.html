@@ -191,6 +191,28 @@ height: 250px; /* ou a altura que quiser */
   border-radius: 8px;
 }
 
+ #botao-resetar {
+  position: absolute;
+  top: 20px;
+  left: 15px; /* lado oposto do "Dados:" */
+  padding: 6px 12px;
+  font-size: 16px;
+  color: #ff0033;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ff0033;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10;
+  text-shadow: 0 0 5px #ff0033, 0 0 10px #ff3366;
+  box-shadow: 0 0 5px #ff0033, 0 0 10px #ff3366;
+  transition: transform 0.2s;
+}
+
+#botao-resetar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #ff0033, 0 0 20px #ff3366;
+}
+
  .bloco-frase {
   background: rgba(0, 0, 0, 0.8);
   padding: 8px 12px;
@@ -306,6 +328,7 @@ height: 250px; /* ou a altura que quiser */
 
   <!-- Tela do jogo -->
 <div id="tela-jogo">
+	<button id="botao-resetar" onclick="resetarJogo()">Resetar</button>
   <div id="computador">
     <div id="tela-computador" onclick="removerDado()">
   <div id="nome-ia">ELIZA</div>
@@ -638,6 +661,14 @@ function mostrarResposta(pergunta) {
   }, 1000);
   
   document.getElementById('resposta-eliza').textContent = '*ELIZA fica triste pois adolescente bateu nela*';
+}
+
+ function resetarJogo() {
+  if (confirm("Tem certeza que deseja resetar os dados?")) {
+    dados = 0;
+    localStorage.setItem("dados", "0");
+    atualizarContador();
+  }
 }
 
 
