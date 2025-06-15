@@ -361,6 +361,27 @@ height: 250px; /* ou a altura que quiser */
 
   <script>
   	let dados = 0;
+let musicaAtivada = true; // ou false, dependendo do padrão
+
+if (localStorage.getItem("estadoJogo")) {
+  const estado = JSON.parse(localStorage.getItem("estadoJogo"));
+
+  dados = estado.dados || 0;
+  document.getElementById("resposta-eliza").textContent = estado.respostaEliza || "";
+  
+  document.getElementById("botao1").textContent = estado.botoes?.[0] || "...";
+  document.getElementById("botao2").textContent = estado.botoes?.[1] || "...";
+  document.getElementById("botao3").textContent = estado.botoes?.[2] || "...";
+  
+  musicaAtivada = estado.musicaAtivada ?? true;
+  
+  // Aqui você pode ligar/desligar a música de acordo com o valor:
+  if (!musicaAtivada) {
+    // exemplo: audio.pause();
+  } else {
+    // exemplo: audio.play();
+  }
+}
   
   if (localStorage.getItem("dados") !== null) {
   dados = parseInt(localStorage.getItem("dados"));
@@ -664,12 +685,60 @@ function mostrarResposta(pergunta) {
 }
 
  function resetarJogo() {
-  if (confirm("Tem certeza que deseja resetar os dados?")) {
-    dados = 0;
-    localStorage.setItem("dados", "0");
-    atualizarContador();
-  }
+  // Mostra a caixa de confirmação personalizada
+  document.getElementById("caixa-confirmacao").style.display = "flex";
 }
+
+ function salvarEstado() {
+  const estado = {
+    dados: dados,
+    respostaEliza: document.getElementById("resposta-eliza").textContent,
+    botoes: [
+      document.getElementById("botao1").textContent,
+      document.getElementById("botao2").textContent,
+      document.getElementById("botao3").textContent
+    ],
+    musicaAtivada: musicaAtivada // você precisa ter essa variável
+  };
+
+  localStorage.setItem("estadoJogo", JSON.stringify(estado));
+}
+
+ function confirmarReset() {
+  localStorage.clear();
+  dados = 0;
+  musicaAtivada = true;
+
+  document.getElementById("resposta-eliza").textContent = "";
+  document.getElementById("botao1").textContent = "...";
+  document.getElementById("botao2").textContent = "...";
+  document.getElementById("botao3").textContent = "...";
+  atualizarContador();
+
+  const audio = document.getElementById("musica-fundo");
+  if (audio) audio.pause();
+  const onda = document.getElementById("onda-som");
+  if (onda) onda.style.display = "none";
+
+  document.getElementById("caixa-confirmacao").style.display = "none";
+  document.getElementById("caixa-sucesso").style.display = "flex";
+}
+
+function fecharConfirmacao() {
+  document.getElementById("caixa-confirmacao").style.display = "none";
+}
+
+function fecharSucesso() {
+  document.getElementById("caixa-sucesso").style.display = "none";
+}
+
+ function ganharDado() {
+  dados++;
+  atualizarContador();
+  salvarEstado(); // salva o novo valor
+}
+
+ setInterval(salvarEstado, 1000); // salva automaticamente a cada 1 segundo
 
 
   // Inicializa com frases já sorteadas
@@ -688,9 +757,7 @@ function mostrarResposta(pergunta) {
     });
 }
 
- window.addEventListener("beforeunload", () => {
-  localStorage.setItem("dados", dados);
-});
+ window.addEventListener("beforeunload", salvarEstado);
 </script>
   <div id="icone-som" onclick="toggleSom()">
   <svg viewBox="0 0 64 64" width="40" height="40" id="icone-som-svg">
@@ -700,6 +767,27 @@ function mostrarResposta(pergunta) {
     <path id="onda-som" d="M38,22 Q46,32 38,42" fill="none" stroke="#0ff" stroke-width="4" stroke-linecap="round"/>
   </svg>
 </div>
-  
+  <!-- Caixa de confirmação -->
+<div id="caixa-confirmacao" style="display:none; position: fixed; top: 0; left: 0; 
+  width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 9999; 
+  justify-content: center; align-items: center; font-family: sans-serif;">
+  <div style="background: #222; color: #fff; padding: 20px 30px; border-radius: 10px; text-align: center; box-shadow: 0 0 10px #0ff;">
+    <p style="font-size: 18px;">Tem certeza que deseja resetar TODO o jogo?</p>
+    <div style="margin-top: 15px;">
+      <button onclick="confirmarReset()" style="background: #900; color: white; padding: 10px 20px; border: none; margin-right: 10px; cursor: pointer; border-radius: 5px;">Sim</button>
+      <button onclick="fecharConfirmacao()" style="background: #444; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Caixa de sucesso -->
+<div id="caixa-sucesso" style="display:none; position: fixed; top: 0; left: 0; 
+  width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 9999; 
+  justify-content: center; align-items: center; font-family: sans-serif;">
+  <div style="background: #222; color: #fff; padding: 20px 30px; border-radius: 10px; text-align: center; box-shadow: 0 0 10px #0ff;">
+    <p style="font-size: 18px;">Jogo resetado com sucesso!</p>
+    <button onclick="fecharSucesso()" style="margin-top: 15px; background: #0a0; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px;">OK</button>
+  </div>
+</div>
 </body>
 </html>
