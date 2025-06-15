@@ -342,8 +342,10 @@ height: 250px; /* ou a altura que quiser */
   if (localStorage.getItem("dados") !== null) {
   dados = parseInt(localStorage.getItem("dados"));
 }
+ atualizarContador()
   	 
   function iniciar() {
+ 
   // Tenta fullscreen primeiro
   const tela = document.documentElement;
 
@@ -555,6 +557,10 @@ async function mostrarIntro() {
   animarDado(1); // Mostra animação +1 dado
 
   mostrarResposta(pergunta);
+}
+
+ function atualizarContador() {
+  document.getElementById("contador-dados").textContent = "Dados: " + dados;
 }
 
 function mostrarResposta(pergunta) {
