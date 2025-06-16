@@ -325,6 +325,11 @@ height: 250px; /* ou a altura que quiser */
     <h1 id="titulo">Click IA</h1>
     <button id="botao-iniciar" onclick="iniciar()">Iniciar</button>
   </div>
+  
+  <!-- Tela de introdução PUDINATOR -->
+<div id="tela-pudinator" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: black; color: #0ff; font-family: monospace; font-size: 20px; justify-content: center; align-items: center; text-align: left; padding: 30px; box-sizing: border-box; z-index: 10000; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;">
+  <pre id="texto-pudinator"></pre>
+</div>
 
   <!-- Tela do jogo -->
 <div id="tela-jogo">
@@ -389,10 +394,13 @@ if (localStorage.getItem("estadoJogo")) {
  atualizarContador()
   	 
   function iniciar() {
- 
-  // Tenta fullscreen primeiro
-  const tela = document.documentElement;
+  document.getElementById("tela-inicial").style.display = "none";
+  mostrarIntroPudinator();
+}
 
+function mostrarIntroPudinator() {
+  // Força fullscreen e orientação logo no início
+  const tela = document.documentElement;
   if (tela.requestFullscreen) {
     tela.requestFullscreen().then(() => {
       travarOrientacaoPaisagem();
@@ -401,11 +409,49 @@ if (localStorage.getItem("estadoJogo")) {
     travarOrientacaoPaisagem();
   }
 
-  // Agora inicia o jogo
-  document.getElementById("tela-inicial").style.display = "none";
-  document.getElementById("tela-jogo").style.display = "flex";
-  document.getElementById("icone-som").style.display = "none";
-  document.getElementById("contador-dados").style.display = "block";
+  // Mostra a intro PUDINATOR
+  const telaP = document.getElementById("tela-pudinator");
+  const texto = document.getElementById("texto-pudinator");
+
+  const frases = [
+    "[PUDINATOR-IA iniciando protocolo...]\n",
+    "...",
+    "Processando parâmetros existenciais...",
+    "Verificando níveis de inteligência...",
+    "Resultado: insuficiente.",
+    "Iniciando simulação evolutiva."
+  ];
+
+  let indexFrase = 0;
+  let indexLetra = 0;
+
+  telaP.style.display = "flex";
+  texto.textContent = "";
+
+  function digitarProximaLetra() {
+    if (indexFrase < frases.length) {
+      const fraseAtual = frases[indexFrase];
+      if (indexLetra < fraseAtual.length) {
+        texto.textContent += fraseAtual.charAt(indexLetra);
+        indexLetra++;
+        setTimeout(digitarProximaLetra, 40);
+      } else {
+        texto.textContent += "\n";
+        indexFrase++;
+        indexLetra = 0;
+        setTimeout(digitarProximaLetra, 600);
+      }
+    } else {
+      setTimeout(() => {
+        telaP.style.display = "none";
+        document.getElementById("tela-jogo").style.display = "flex";
+        document.getElementById("contador-dados").style.display = "block";
+        document.getElementById("icone-som").style.display = "none";
+      }, 1000);
+    }
+  }
+
+  digitarProximaLetra();
 }
 
 function travarOrientacaoPaisagem() {
