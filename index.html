@@ -81,9 +81,12 @@
     #tela-jogo {
   display: none;
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: #4E81D3;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('fundo-jogo.png'); /* Troque pelo nome da sua imagem */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: black;
   font-size: 32px;
   justify-content: center;
@@ -348,6 +351,7 @@ height: 250px; /* ou a altura que quiser */
   box-shadow: inset 0 0 60px 20px rgba(255, 255, 255, 0.15);
 ">
   <pre id="texto-pudinator"></pre>
+  <canvas id="particulas-pudinator" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></canvas>
 </div>
 
   <!-- Tela do jogo -->
@@ -445,6 +449,7 @@ function mostrarIntroPudinator() {
   let indexLetra = 0;
 
   telaP.style.display = "flex";
+iniciarParticulasPudinator(); // adiciona partículas escuras
   texto.textContent = "";
 
   function digitarProximaLetra() {
@@ -820,6 +825,49 @@ function fecharSucesso() {
     }).catch(function(err) {
       console.log("Erro ao registrar Service Worker", err);
     });
+}
+
+ // Partículas escuras para a intro PUDINATOR
+function iniciarParticulasPudinator() {
+  const canvasP = document.getElementById("particulas-pudinator");
+  const ctxP = canvasP.getContext("2d");
+
+  canvasP.width = window.innerWidth;
+  canvasP.height = window.innerHeight;
+
+  const particulasPretas = [];
+  const total = 40;
+
+  for (let i = 0; i < total; i++) {
+    particulasPretas.push({
+      x: Math.random() * canvasP.width,
+      y: Math.random() * canvasP.height,
+      size: Math.random() * 2 + 1,
+      speedX: (Math.random() - 0.5) * 0.5,
+      speedY: (Math.random() - 0.5) * 0.5,
+    });
+  }
+
+  function animar() {
+    ctxP.clearRect(0, 0, canvasP.width, canvasP.height);
+    ctxP.fillStyle = "rgba(50, 50, 50, 0.3)";
+
+    particulasPretas.forEach(p => {
+      ctxP.beginPath();
+      ctxP.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctxP.fill();
+
+      p.x += p.speedX;
+      p.y += p.speedY;
+
+      if (p.x < 0 || p.x > canvasP.width) p.speedX *= -1;
+      if (p.y < 0 || p.y > canvasP.height) p.speedY *= -1;
+    });
+
+    requestAnimationFrame(animar);
+  }
+
+  animar();
 }
 
  window.addEventListener("beforeunload", salvarEstado);
